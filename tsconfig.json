@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "composite": true,
+    "outDir": "./dist", 
+    "module": "ESNext",
+    "target": "ESNext",
+    "moduleResolution": "Node"
+  },
+  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.vue"]
+}
