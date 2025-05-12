@@ -1,14 +1,15 @@
 <template>
-  <div class="card">
-    Olá
+  <div>
+    <h1>Home!</h1>
   </div>
 </template>
 
-<script setup></script>
-
 <script>
 export default {
-  name: "Login",
+  name: "Home",
+  props: {
+    nome: String,
+  },
 };
 </script>
 
