@@ -5,6 +5,3 @@ import Main from './views/Main.vue';
 <template>
   <Main></Main>
 </template>
-
-<style scoped>
-</style>
