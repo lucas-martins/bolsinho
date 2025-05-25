@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <GlobalLoading />
     <router-view></router-view>
   </div>
 </template>
@@ -8,4 +9,8 @@
 export default {
   name: "Main",
 };
+</script>
+
+<script setup>
+import GlobalLoading from "../components/GlobalLoading.vue";
 </script>

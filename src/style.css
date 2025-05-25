@@ -29,7 +29,7 @@ body,
 }
 
 .relative {
-    position: relative;
+  position: relative;
 }
 
 .container {
@@ -56,13 +56,13 @@ body,
 }
 
 .btn-icon {
-    background-color: transparent !important;
-    color: #10b981 !important;
-    border: none !important;
-    position: absolute !important;
-    left: 0;
-    width: 16px !important;
-    height: 16px !important;
+  background-color: transparent !important;
+  color: #10b981 !important;
+  border: none !important;
+  position: absolute !important;
+  left: 0;
+  width: 16px !important;
+  height: 16px !important;
 }
 
 .auth-card {

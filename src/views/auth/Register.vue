@@ -143,9 +143,14 @@ import { z } from "zod";
 import { Form, Field } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/zod";
 import { useRouter } from "vue-router";
+import { useToast } from "primevue/usetoast";
+import api from "../../services/axios.js";
+import { useLoading } from "../../composables/useLoading.js";
 
 const name = "Cadastro";
 const router = useRouter();
+const toast = useToast();
+const { showLoading, hideLoading } = useLoading();
 
 const schema = toTypedSchema(
   z
@@ -175,8 +180,36 @@ const initialValues = {
   confirmPassword: "",
 };
 
-const onFormSubmit = (values) => {
-  console.log("Cadastro enviado com:", values);
+const onFormSubmit = async (values) => {
+  const { name, username, email, password } = values;
+  const payload = {
+    name,
+    username,
+    email,
+    password,
+  };
+
+  try {
+    showLoading();
+    await api.post("/auth/register", payload);
+    toast.add({
+      severity: "success",
+      summary: "Sucesso",
+      detail: "Cadastro realizado com sucesso!",
+      life: 3000,
+    });
+    goToLogin();
+  } catch (error) {
+    toast.add({
+      severity: "error",
+      summary: "Erro",
+      detail:
+        "Erro ao cadastrar: " + (error.response?.data?.detail || error.message),
+      life: 5000,
+    });
+  } finally {
+    hideLoading();
+  }
 };
 
 const goToLogin = () => {
