@@ -73,9 +73,16 @@
 import { z } from "zod";
 import { Form, Field } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/zod";
+import { useRouter } from "vue-router";
+import { useToast } from "primevue/usetoast";
 import TextInsideDivider from "../../components/TextInsideDivider.vue";
+import { useLoading } from "../../composables/useLoading.js";
+import api from "../../services/axios.js";
 
 const name = "Login";
+const router = useRouter();
+const toast = useToast();
+const { showLoading, hideLoading } = useLoading();
 
 const schema = toTypedSchema(
   z.object({
@@ -89,8 +96,39 @@ const initialValues = {
   password: "",
 };
 
-const onFormSubmit = (values) => {
-  console.log("Form enviado com:", values);
+const onFormSubmit = async (values) => {
+  const { username, password } = values;
+  const payload = {
+    username,
+    password,
+  };
+
+  try {
+    showLoading();
+
+    const response = await api.post("/auth/login", payload);
+    const token = response.data.access_token;
+
+    toast.add({
+      severity: "success",
+      summary: "Sucesso",
+      detail: "Login realizado com sucesso!",
+      life: 3000,
+    });
+
+    localStorage.setItem("token", token);
+    router.push("/"); // ajuste conforme sua rota
+  } catch (error) {
+    toast.add({
+      severity: "error",
+      summary: "Erro",
+      detail:
+        "Erro ao logar: " + (error.response?.data?.detail || error.message),
+      life: 5000,
+    });
+  } finally {
+    hideLoading();
+  }
 };
 </script>
 
