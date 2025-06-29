@@ -28,6 +28,10 @@ body,
   flex-direction: column;
 }
 
+.justify-content-end {
+  justify-content: end;
+}
+
 .relative {
   position: relative;
 }

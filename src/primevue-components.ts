@@ -7,7 +7,9 @@ import Button from 'primevue/button';
 import Card from 'primevue/card';
 import Message from 'primevue/message';
 import Password from 'primevue/password';
+import Skeleton from 'primevue/skeleton';
 import Toast from 'primevue/toast';
+import Menubar from 'primevue/menubar';
 import Aura from '@primeuix/themes/aura';
 import 'primeicons/primeicons.css';
 
@@ -22,4 +24,6 @@ export function setupPrimeVue(app: any) {
   app.component('Form', Form);
   app.component('Password', Password);
   app.component('Toast', Toast);
+  app.component('Skeleton', Skeleton);
+  app.component('Menubar', Menubar);
 }
