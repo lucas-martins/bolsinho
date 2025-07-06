@@ -32,6 +32,10 @@ body,
   justify-content: end;
 }
 
+.justify-content-between {
+  justify-content: space-between;
+}
+
 .relative {
   position: relative;
 }
@@ -39,6 +43,14 @@ body,
 .container {
   justify-content: center;
   align-items: center;
+}
+
+.align-items-center {
+  align-items: center;
+}
+
+.p-1 {
+  padding: 1rem;
 }
 
 .mt-1 {

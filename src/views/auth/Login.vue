@@ -108,6 +108,7 @@ const onFormSubmit = async (values) => {
 
     const response = await api.post("/auth/login", payload);
     const token = response.data.access_token;
+    const user_id = response.data.user_id;
 
     toast.add({
       severity: "success",
@@ -117,6 +118,7 @@ const onFormSubmit = async (values) => {
     });
 
     localStorage.setItem("token", token);
+    localStorage.setItem("user_id", user_id);
     router.push("/"); // ajuste conforme sua rota
   } catch (error) {
     toast.add({
