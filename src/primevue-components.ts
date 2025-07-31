@@ -16,9 +16,10 @@ import RadioButton from "primevue/radiobutton";
 import DatePicker from "primevue/datepicker";
 import Aura from "@primeuix/themes/aura";
 import "primeicons/primeicons.css";
+import pt from "./locale/pt.json";
 
 export function setupPrimeVue(app: any) {
-  app.use(PrimeVue, { theme: { preset: Aura } });
+  app.use(PrimeVue, { locale: pt, theme: { preset: Aura } });
   app.use(ToastService);
 
   app.component("InputText", InputText);

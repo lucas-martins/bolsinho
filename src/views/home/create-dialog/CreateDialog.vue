@@ -3,7 +3,7 @@
     <Dialog
       v-model:visible="localVisible"
       modal
-      header="Adicionar Operação"
+      :header="headerLabel"
       :style="{ width: '30rem' }"
       @hide="emitClose"
     >
@@ -11,13 +11,21 @@
       <div class="p-fluid">
         <!-- Descrição -->
         <div class="field">
-          <label for="desc">Descrição</label>
+          <label
+            class="inline-block description-operation-create mr-1"
+            for="desc"
+            >Descrição</label
+          >
           <InputText id="desc" v-model="form.description" autofocus />
         </div>
 
         <!-- Valor -->
-        <div class="field">
-          <label for="valor">Valor</label>
+        <div class="field mt-050">
+          <label
+            class="inline-block description-operation-create mr-1"
+            for="valor"
+            >Valor</label
+          >
           <InputNumber
             id="valor"
             v-model="form.value"
@@ -29,20 +37,36 @@
         </div>
 
         <!-- Tipo -->
-        <div class="field">
-          <label class="block mb-2">Tipo</label>
+        <div class="flex field mt-050">
+          <label class="block description-operation-create mr-1 mb-2"
+            >Tipo</label
+          >
           <div class="flex align-items-center gap-3">
-            <RadioButton inputId="tipoE" name="tipo" value="E" v-model="form.type" />
-            <label for="tipoE" class="mr-3">Entrada</label>
+            <RadioButton
+              inputId="tipoE"
+              name="tipo"
+              value="E"
+              v-model="form.type"
+            />
+            <label for="tipoE" class="ml-050 mr-1">Entrada</label>
 
-            <RadioButton inputId="tipoS" name="tipo" value="S" v-model="form.type" />
-            <label for="tipoS">Saída</label>
+            <RadioButton
+              inputId="tipoS"
+              name="tipo"
+              value="S"
+              v-model="form.type"
+            />
+            <label class="ml-050" for="tipoS">Saída</label>
           </div>
         </div>
 
         <!-- Data -->
-        <div class="field">
-          <label for="data">Data</label>
+        <div class="field mt-050">
+          <label
+            class="inline-block description-operation-create mr-1"
+            for="data"
+            >Data</label
+          >
           <DatePicker
             id="data"
             v-model="form.date"
@@ -53,26 +77,59 @@
       </div>
 
       <!-- BOTÕES -->
-      <div class="flex justify-end gap-2 mt-4">
-        <Button label="Cancelar" severity="secondary" @click="close" />
-        <Button label="Salvar" @click="save" />
+      <div class="flex justify-content-end gap-2 mt-1">
+        <Button
+          class="mr-1"
+          label="Cancelar"
+          severity="danger"
+          @click="close"
+        />
+        <Button :label="saveButtonLabel" @click="save" />
       </div>
     </Dialog>
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 import { useToast } from "primevue/usetoast";
 import api from "../../../services/axios.js";
 
-const props = defineProps({ visible: Boolean });
+const props = defineProps({
+  visible: Boolean,
+  operation: Object,
+});
 const emit = defineEmits(["update:visible", "close"]);
+
+const isEditing = computed(() => !!props.operation);
 
 const localVisible = computed({
   get: () => props.visible,
   set: (val) => emit("update:visible", val),
 });
+
+const headerLabel = computed(() =>
+  isEditing.value ? "Editar" : "Adicionar"
+);
+
+const saveButtonLabel = computed(() =>
+  isEditing.value ? "Editar" : "Salvar"
+);
+
+watch(
+  () => props.operation,
+  (newOp) => {
+    if (newOp) {
+      form.value = {
+        description: newOp.description,
+        value: newOp.value,
+        type: newOp.type,
+        date: new Date(newOp.date), // precisa transformar para Date
+      };
+    }
+  },
+  { immediate: true }
+);
 
 const form = ref({
   description: "",
@@ -84,7 +141,12 @@ const form = ref({
 const toast = useToast();
 
 async function save() {
-  if (!form.value.description || !form.value.value || !form.value.date || !form.value.type) {
+  if (
+    !form.value.description ||
+    !form.value.value ||
+    !form.value.date ||
+    !form.value.type
+  ) {
     toast.add({
       severity: "warn",
       summary: "Campos obrigatórios",
@@ -94,23 +156,44 @@ async function save() {
     return;
   }
 
-  // converte Date → "YYYY-MM-DD"
   const dateStr = form.value.date.toISOString().slice(0, 10);
 
-  try {
-    await api.post("/operations", {
-      description: form.value.description,
-      value: form.value.value,
-      type: form.value.type,
-      date: dateStr,
-    });
+  const payload = {
+    description: form.value.description,
+    value: form.value.value,
+    type: form.value.type,
+    date: dateStr,
+  };
 
-    toast.add({ severity: "success", summary: "Sucesso", detail: "Operação criada.", life: 3000 });
+  try {
+    if (isEditing.value) {
+      await api.put(`/operations/${props.operation.id}`, payload);
+      toast.add({
+        severity: "success",
+        summary: "Atualizado",
+        detail: "Operação atualizada.",
+        life: 3000,
+      });
+    } else {
+      await api.post("/operations", payload);
+      toast.add({
+        severity: "success",
+        summary: "Criado",
+        detail: "Operação criada.",
+        life: 3000,
+      });
+    }
+
     resetForm();
     close();
   } catch (err) {
     console.error(err);
-    toast.add({ severity: "error", summary: "Erro", detail: "Não foi possível salvar.", life: 3000 });
+    toast.add({
+      severity: "error",
+      summary: "Erro",
+      detail: "Não foi possível salvar.",
+      life: 3000,
+    });
   }
 }
 
